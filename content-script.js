@@ -1,7 +1,11 @@
 const IMAGE_SIDE_MIN = 25;
 
+function isHidden(el) {
+    return (el.offsetParent === null)
+}
+
 function getImageToReplace(candidateImgs) {
-  let filteredImgs = candidateImgs.filter(function(img) {
+  let filteredImgs = candidateImgs.filter(function(index, img) {
     return img.height >= IMAGE_SIDE_MIN && img.width >= IMAGE_SIDE_MIN && !isHidden(img);
   });
   let index = getRandomInt(0, filteredImgs.length);
@@ -17,14 +21,30 @@ function genRandomPokemon() {
   console.log(reader.readAsText(file));
 }
 
+function onImageClicked() {
+  // should use chrome.tabs
+  var newURL = "http://stackoverflow.com/";
+  window.open(newURL);
+}
+
 function genPokemonImage(height, width) {
-  genRandomPokemon();
-  let side = width >= height ? height: width;
-  let imageSrc = chrome.extension.getURL("images/25.png");
+  let side = width >= height ? height : width;
+  let imageSrc = chrome.extension.getURL("images/25.png")
   let imageAlt = "Pikachu";
   let newImage = $("<img>", {src: imageSrc, alt: imageAlt});
-  newImage.attr('height', side);
-  newImage.attr('width', side);
+  newImage.css({
+    position: 'absolute',
+    height: side,
+    width: side,
+    overflow: 'auto',
+    margin: 'auto',
+    top: 0, 
+    left: 0, 
+    bottom: 0, 
+    right: 0,
+  });
+
+  newImage.click(onImageClicked);
   return newImage;
 }
 
@@ -34,11 +54,38 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function isHidden(el) {
-    return (el.offsetParent === null)
+function getOverlayElement(imageToOverlay) {
+
+  const height = imageToOverlay.height;
+  const width = imageToOverlay.width;
+
+  const imgPos = $(imageToOverlay).offset();
+  y = imgPos.top;
+  x = imgPos.left;
+
+  return $('<div></div>')
+    .addClass('pokemon-overlay')
+    .css({
+      position: 'absolute',
+      height: height,
+      width: width,
+      left: x,
+      top: y,
+      'background-color': 'rgb(0, 0, 0, 0)',
+      cursor: 'pointer',
+    });
 }
 
-let imgs = document.getElementsByTagName("img");
-let imgsArray = [].slice.call(imgs); //converts from HTMLCollection to Array
-let img = getImageToReplace(imgsArray);
-$(img).replaceWith(genPokemonImage(img.height, img.width));
+function addPokemon() {
+  const imgs = $('img');
+  const img = getImageToReplace(imgs);
+
+  const overlayElement = getOverlayElement(img);
+  
+  $('body').after(overlayElement);
+  overlayElement.append(genPokemonImage(overlayElement.height(), overlayElement.width()));
+  
+  $(img).css('visibility', 'hidden');
+}
+
+$(document).ready(addPokemon);
