@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+
+  "name": "Pokémon Hunt",
+  "description": "Search for Pokémon in your browser.",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "pikachu.png",
+    "default_popup": "popup.html",
+    "default_title": "Pika-pi, Pikachu!!!"
+  },
+  "content_scripts": [
+    {
+      "matches": [ "http://*/*", "https://*/*" ],
+      "js": [ "externals/jquery-3.1.0.min.js", "content-script.js" ]
+    }
+  ],
+  "web_accessible_resources": [
+    "images/*.png"
+  ],
+  "permissions": [
+    "activeTab"
+  ]
+}
