@@ -5,14 +5,22 @@ function getImageToReplace(candidateImgs) {
     return img.height >= IMAGE_SIDE_MIN && img.width >= IMAGE_SIDE_MIN && !isHidden(img);
   });
   let index = getRandomInt(0, filteredImgs.length);
-  console.log(filteredImgs);
-  console.log(index);
   return filteredImgs[index];
 }
 
+function genRandomPokemon() {
+  let reader = new FileReader();
+  let file = new File([], chrome.extension.getURL("pkmn_scores.csv"));
+  reader.onload = function() {
+    console.log(this.result);
+  }
+  console.log(reader.readAsText(file));
+}
+
 function genPokemonImage(height, width) {
-  let side = width >= height ? width: height;
-  let imageSrc = chrome.extension.getURL("images/25.png")
+  genRandomPokemon();
+  let side = width >= height ? height: width;
+  let imageSrc = chrome.extension.getURL("images/25.png");
   let imageAlt = "Pikachu";
   let newImage = $("<img>", {src: imageSrc, alt: imageAlt});
   newImage.attr('height', side);
