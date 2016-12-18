@@ -1,9 +1,22 @@
-function genImage(height, width) {
-  let imageSrc = chrome.extension.getURL("images/pikachu.png")
+const IMAGE_SIDE_MIN = 25;
+
+function getImageToReplace(candidateImgs) {
+  let filteredImgs = candidateImgs.filter(function(img) {
+    return img.height >= IMAGE_SIDE_MIN && img.width >= IMAGE_SIDE_MIN && !isHidden(img);
+  });
+  let index = getRandomInt(0, filteredImgs.length);
+  console.log(filteredImgs);
+  console.log(index);
+  return filteredImgs[index];
+}
+
+function genPokemonImage(height, width) {
+  let side = width >= height ? width: height;
+  let imageSrc = chrome.extension.getURL("images/25.png")
   let imageAlt = "Pikachu";
   let newImage = $("<img>", {src: imageSrc, alt: imageAlt});
-  newImage.attr('height', height);
-  newImage.attr('width', width);
+  newImage.attr('height', side);
+  newImage.attr('width', side);
   return newImage;
 }
 
@@ -13,9 +26,11 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function isHidden(el) {
+    return (el.offsetParent === null)
+}
+
 let imgs = document.getElementsByTagName("img");
-let numImgs = imgs.length;
-let index = getRandomInt(0, numImgs)
-let img = imgs[index];
-console.log(index);
-$(img).replaceWith(genImage(img.height, img.width));
+let imgsArray = [].slice.call(imgs); //converts from HTMLCollection to Array
+let img = getImageToReplace(imgsArray);
+$(img).replaceWith(genPokemonImage(img.height, img.width));
