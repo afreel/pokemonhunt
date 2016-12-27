@@ -5,16 +5,16 @@ function isHidden(el) {
 }
 
 function getImageToReplace(candidateImgs) {
-  let filteredImgs = candidateImgs.filter(function(index, img) {
+  const filteredImgs = candidateImgs.filter(function(index, img) {
     return img.height >= IMAGE_SIDE_MIN && img.width >= IMAGE_SIDE_MIN && !isHidden(img);
   });
-  let index = getRandomInt(0, filteredImgs.length);
+  const index = getRandomInt(0, filteredImgs.length);
   return filteredImgs[index];
 }
 
 function genRandomPokemon() {
-  let reader = new FileReader();
-  let file = new File([], chrome.extension.getURL("pkmn_scores.csv"));
+  const reader = new FileReader();
+  const file = new File([], chrome.extension.getURL("pkmn_scores.csv"));
   reader.onload = function() {
     console.log(this.result);
   }
@@ -31,10 +31,10 @@ function onPokemonClick(originalImage, event) {
 }
 
 function genPokemonImage(height, width) {
-  let side = width >= height ? height : width;
-  let imageSrc = chrome.extension.getURL("images/25.png")
-  let imageAlt = "Pikachu";
-  let newImage = $("<img>", {src: imageSrc, alt: imageAlt});
+  const side = width >= height ? height : width;
+  const imageSrc = chrome.extension.getURL("images/25.png")
+  const imageAlt = "Pikachu";
+  const newImage = $("<img>", {src: imageSrc, alt: imageAlt});
 
   newImage.addClass('pokemon-image')
     .css({
