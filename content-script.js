@@ -78,7 +78,7 @@ function addPokemon() {
     const overlayElement = getOverlayElement(img);
     const pokeImage = genPokemonImage(overlayElement.height(), overlayElement.width());
 
-    pokeImage.click(_.partial(onPokemonClick, img));
+    pokeImage.click(event => onPokemonClick(img, event));
 
     $('body').after(overlayElement);
     overlayElement.append(pokeImage);
