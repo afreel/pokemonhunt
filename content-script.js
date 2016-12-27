@@ -21,10 +21,13 @@ function genRandomPokemon() {
   console.log(reader.readAsText(file));
 }
 
-function onImageClicked() {
+function onPokemonClick(originalImage, event) {
   // should use chrome.tabs
   var newURL = "http://stackoverflow.com/";
-  window.open(newURL);
+  // window.open(newURL);
+
+  $(originalImage).css('visibility', 'visible');
+  $(event.currentTarget).css('visibility', 'hidden');
 }
 
 function genPokemonImage(height, width) {
@@ -32,19 +35,13 @@ function genPokemonImage(height, width) {
   let imageSrc = chrome.extension.getURL("images/25.png")
   let imageAlt = "Pikachu";
   let newImage = $("<img>", {src: imageSrc, alt: imageAlt});
-  newImage.css({
-    position: 'absolute',
-    height: side,
-    width: side,
-    overflow: 'auto',
-    margin: 'auto',
-    top: 0, 
-    left: 0, 
-    bottom: 0, 
-    right: 0,
-  });
 
-  newImage.click(onImageClicked);
+  newImage.addClass('pokemon-image')
+    .css({
+      height: side,
+      width: side,
+    });
+
   return newImage;
 }
 
@@ -66,13 +63,10 @@ function getOverlayElement(imageToOverlay) {
   return $('<div></div>')
     .addClass('pokemon-overlay')
     .css({
-      position: 'absolute',
       height: height,
       width: width,
       left: x,
       top: y,
-      'background-color': 'rgb(0, 0, 0, 0)',
-      cursor: 'pointer',
     });
 }
 
@@ -80,12 +74,17 @@ function addPokemon() {
   const imgs = $('img');
   const img = getImageToReplace(imgs);
 
-  const overlayElement = getOverlayElement(img);
-  
-  $('body').after(overlayElement);
-  overlayElement.append(genPokemonImage(overlayElement.height(), overlayElement.width()));
-  
-  $(img).css('visibility', 'hidden');
+  if (!_.isEmpty(imgs)) {
+    const overlayElement = getOverlayElement(img);
+    const pokeImage = genPokemonImage(overlayElement.height(), overlayElement.width());
+
+    pokeImage.click(_.partial(onPokemonClick, img));
+
+    $('body').after(overlayElement);
+    overlayElement.append(pokeImage);
+    
+    $(img).css('visibility', 'hidden');
+  }
 }
 
 $(document).ready(addPokemon);

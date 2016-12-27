@@ -13,7 +13,8 @@
   "content_scripts": [
     {
       "matches": [ "http://*/*", "https://*/*" ],
-      "js": [ "externals/jquery-3.1.0.min.js", "content-script.js" ]
+      "js": [ "externals/jquery-3.1.0.min.js", "content-script.js", "externals/lodash.js" ],
+      "css": [ "styles/style.css" ]
     }
   ],
   "web_accessible_resources": [
