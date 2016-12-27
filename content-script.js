@@ -19,13 +19,13 @@ function genRandomPokemon() {
   console.log(reader.readAsText(file));
 }
 
-function onPokemonClick(originalImage, event) {
+function onPokemonClick(originalImage, overlayElement,  event) {
   // should use chrome.tabs
   var newURL = "http://stackoverflow.com/";
   // window.open(newURL);
 
   $(originalImage).css('visibility', 'visible');
-  $(event.currentTarget).css('visibility', 'hidden');
+  $(overlayElement).css('visibility', 'hidden');
 }
 
 function genPokemonImage(height, width) {
@@ -76,7 +76,7 @@ function addPokemon() {
     const overlayElement = getOverlayElement(img);
     const pokeImage = genPokemonImage(overlayElement.height(), overlayElement.width());
 
-    pokeImage.click(event => onPokemonClick(img, event));
+    pokeImage.click(event => onPokemonClick(img, overlayElement, event));
 
     $('body').after(overlayElement);
     overlayElement.append(pokeImage);
