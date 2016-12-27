@@ -5,9 +5,9 @@ function isHidden(el) {
 }
 
 function getImageToReplace(candidateImgs) {
-  const filteredImgs = candidateImgs.filter(function(index, img) {
-    return img.height >= IMAGE_SIDE_MIN && img.width >= IMAGE_SIDE_MIN && !isHidden(img);
-  });
+  const filteredImgs = candidateImgs.filter((index, img) => 
+    img.height >= IMAGE_SIDE_MIN && img.width >= IMAGE_SIDE_MIN && !isHidden(img)
+  );
   const index = getRandomInt(0, filteredImgs.length);
   return filteredImgs[index];
 }
@@ -15,9 +15,7 @@ function getImageToReplace(candidateImgs) {
 function genRandomPokemon() {
   const reader = new FileReader();
   const file = new File([], chrome.extension.getURL("pkmn_scores.csv"));
-  reader.onload = function() {
-    console.log(this.result);
-  }
+  reader.onload = () => console.log(this.result);
   console.log(reader.readAsText(file));
 }
 
@@ -57,8 +55,8 @@ function getOverlayElement(imageToOverlay) {
   const width = imageToOverlay.width;
 
   const imgPos = $(imageToOverlay).offset();
-  y = imgPos.top;
-  x = imgPos.left;
+  const y = imgPos.top;
+  const x = imgPos.left;
 
   return $('<div></div>')
     .addClass('pokemon-overlay')
