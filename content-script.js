@@ -71,7 +71,7 @@ function addPokemon() {
   const imgs = $('img');
   const img = getImageToReplace(imgs);
 
-  if (!_.isEmpty(imgs)) {
+  if (img) {
     const overlayElement = getOverlayElement(img);
 
     genPokemonImage(overlayElement.height(), overlayElement.width())
