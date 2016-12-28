@@ -12,13 +12,6 @@ function getImageToReplace(candidateImgs) {
   return filteredImgs[index];
 }
 
-function genRandomPokemon() {
-  const reader = new FileReader();
-  const file = new File([], chrome.extension.getURL("pkmn_scores.csv"));
-  reader.onload = () => console.log(this.result);
-  console.log(reader.readAsText(file));
-}
-
 function onPokemonClick(originalImage, overlayElement,  event) {
   // should use chrome.tabs
   var newURL = "http://stackoverflow.com/";
@@ -29,18 +22,24 @@ function onPokemonClick(originalImage, overlayElement,  event) {
 }
 
 function genPokemonImage(height, width) {
-  const side = width >= height ? height : width;
-  const imageSrc = chrome.extension.getURL("images/25.png")
-  const imageAlt = "Pikachu";
-  const newImage = $("<img>", {src: imageSrc, alt: imageAlt});
+  return $.get('https://tranquil-sands-69613.herokuapp.com/get_pokemon')
+    .then(pokeId => {
+      const side = width >= height ? height : width;
+      const imageSrc = chrome.extension.getURL("images/" + pokeId + ".png");
+      const imageAlt = "somePoke";
+      const newImage = $("<img>", {src: imageSrc, alt: imageAlt});
 
-  newImage.addClass('pokemon-image')
-    .css({
-      height: side,
-      width: side,
+      newImage.addClass('pokemon-image')
+        .css({
+          height: side,
+          width: side,
+        });
+
+      return newImage;
+    })
+    .catch(err => {
+      debugger;
     });
-
-  return newImage;
 }
 
 function getRandomInt(min, max) {
@@ -74,14 +73,16 @@ function addPokemon() {
 
   if (!_.isEmpty(imgs)) {
     const overlayElement = getOverlayElement(img);
-    const pokeImage = genPokemonImage(overlayElement.height(), overlayElement.width());
 
-    pokeImage.click(event => onPokemonClick(img, overlayElement, event));
+    genPokemonImage(overlayElement.height(), overlayElement.width())
+      .then(pokeImage => {
+        pokeImage.click(event => onPokemonClick(img, overlayElement, event));
 
-    $('body').after(overlayElement);
-    overlayElement.append(pokeImage);
-    
-    $(img).css('visibility', 'hidden');
+        $('body').after(overlayElement);
+        overlayElement.append(pokeImage);
+        
+        $(img).css('visibility', 'hidden');
+      });
   }
 }
 
