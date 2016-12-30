@@ -22,7 +22,7 @@ function onPokemonClick(originalImage, overlayElement,  event) {
 }
 
 function genPokemonImage(height, width) {
-  return $.get('https://tranquil-sands-69613.herokuapp.com/get_pokemon')
+  return $.get('https://radiant-dusk-87762.herokuapp.com/get_pokemon')
     .then(pokeId => {
       const side = width >= height ? height : width;
       const imageSrc = chrome.extension.getURL("images/" + pokeId + ".png");
