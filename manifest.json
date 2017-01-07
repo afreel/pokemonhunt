@@ -17,7 +17,6 @@
       "js": [ 
         "externals/jquery-3.1.0.min.js",
         "content-script.js",
-        "externals/lodash.js",
         "util.js",
         "const.js"
       ],
