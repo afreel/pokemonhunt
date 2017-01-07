@@ -1,9 +1,3 @@
-const IMAGE_SIDE_MIN = 25;
-
-function isHidden(el) {
-    return (el.offsetParent === null)
-}
-
 function getImageToReplace(candidateImgs) {
   const filteredImgs = candidateImgs.filter((index, img) => 
     img.height >= IMAGE_SIDE_MIN && img.width >= IMAGE_SIDE_MIN && !isHidden(img)
@@ -12,59 +6,54 @@ function getImageToReplace(candidateImgs) {
   return filteredImgs[index];
 }
 
-function onPokemonClick(originalImage, overlayElement,  event) {
-  // should use chrome.tabs
-  var newURL = "http://stackoverflow.com/";
-  // window.open(newURL);
-
-  $(originalImage).css('visibility', 'visible');
-  $(overlayElement).css('visibility', 'hidden');
-}
-
-function genPokemonImage(height, width) {
-  return $.get('https://radiant-dusk-87762.herokuapp.com/get_pokemon')
-    .then(pokeId => {
-      const side = width >= height ? height : width;
-      const imageSrc = chrome.extension.getURL("images/" + pokeId + ".png");
-      const imageAlt = "somePoke";
-      const newImage = $("<img>", {src: imageSrc, alt: imageAlt});
-
-      newImage.addClass('pokemon-image')
-        .css({
-          height: side,
-          width: side,
-        });
-
-      return newImage;
-    })
-    .catch(err => {
-      debugger;
-    });
-}
-
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
 function getOverlayElement(imageToOverlay) {
-
   const height = imageToOverlay.height;
   const width = imageToOverlay.width;
 
   const imgPos = $(imageToOverlay).offset();
-  const y = imgPos.top;
-  const x = imgPos.left;
 
   return $('<div></div>')
     .addClass('pokemon-overlay')
     .css({
       height: height,
       width: width,
-      left: x,
-      top: y,
+      left: imgPos.left,
+      top: imgPos.top,
     });
+}
+
+function genPokemonImage(overlayElement, clickCallback) {
+  const height = overlayElement.height();
+  const width = overlayElement.width();
+
+  return $.get(`${API}/get_pokemon`)
+    .then(results => {
+      const side = width >= height ? height : width;
+      const pokeImage = $("<img>", {
+          src: chrome.extension.getURL(`images/${results.pokemon_id}.png`),
+          alt: results.pokemon_id
+        })
+        .addClass('pokemon-image')
+        .css({
+          height: side,
+          width: side,
+        })
+        .click(event => clickCallback(results.encounter_id));
+
+      return pokeImage;
+    })
+    .catch(err => {
+      debugger;
+    });
+}
+
+function onPokemonClick(originalImage, overlayElement, encounter_id) {
+  // should use chrome.tabs
+  var newURL = `${API}/encounter/${encounter_id}`;
+  window.open(newURL);
+
+  $(originalImage).css('visibility', 'visible');
+  $(overlayElement).css('visibility', 'hidden');
 }
 
 function addPokemon() {
@@ -74,9 +63,12 @@ function addPokemon() {
   if (img) {
     const overlayElement = getOverlayElement(img);
 
-    genPokemonImage(overlayElement.height(), overlayElement.width())
+    function clickCallback(encounter_id) {
+      onPokemonClick(img, overlayElement, encounter_id);
+    } 
+
+    genPokemonImage(overlayElement, clickCallback)
       .then(pokeImage => {
-        pokeImage.click(event => onPokemonClick(img, overlayElement, event));
 
         $('body').after(overlayElement);
         overlayElement.append(pokeImage);
