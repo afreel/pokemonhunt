@@ -13,8 +13,8 @@
   "content_scripts": [
     {
       "matches": [ "http://*/*", "https://*/*" ],
-      "exclude_matches": [ "http://*/encounter/*", "https://*/encounter/*" ],
-      "js": [ 
+      "exclude_matches": [ "http://*/encounter/*", "https://*/encounter/*", "http://*/pokedex/*", "https://*/pokedex/*" ],
+      "js": [
         "externals/jquery-3.1.0.min.js",
         "content-script.js",
         "util.js",
