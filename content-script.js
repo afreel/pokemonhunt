@@ -26,7 +26,9 @@ function genPokemonImage(overlayElement, clickCallback) {
   const height = overlayElement.height();
   const width = overlayElement.width();
 
-  return $.get(`${API}/get_pokemon`)
+  return $.post(`${API}/get_pokemon`, {
+    url: window.location.href
+  })
     .then(results => {
       const side = width >= height ? height : width;
       const pokeImage = $("<img>", {
